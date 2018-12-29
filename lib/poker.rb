@@ -1,6 +1,5 @@
 class PokerHand
   # 1. decide the hand's best case
-  # 2. Calculate hands total based on the cards and the evaluation
     # method explained in the README.md file.
   # 3. do the same for the second hand
   # 4. compare both hands and return result ("Win", "Tie", "Loss")
@@ -15,36 +14,12 @@ class PokerHand
     @cards1 = hand.split(" ")
   end
 
-  def self.total (cards = @cards1)# Calculate hand total points before adding value of best hand combination
+  # Calculate hand total points before adding value of best hand combination
+  def self.total (cards = @cards1)
+    card_value = {"2" => 2, "3" => 3, "4" => 4, "5" => 5, "6" => 6, "7" => 7, "8" => 8, "9" => 9, "T" => 10, "J" => 11, "Q" => 12, "K" => 13, "A" => 14}
+
     @cards1.each do |card|
-      case card[0]
-      when "2"
-        @total += 2
-      when "3"
-        @total += 3
-      when "4"
-        @total += 4
-      when "5"
-        @total += 5
-      when "6"
-        @total += 6
-      when "7"
-        @total += 7
-      when "8"
-        @total += 8
-      when "9"
-        @total += 9
-      when "T"
-        @total += 10
-      when "J"
-        @total += 11
-      when "Q"
-        @total += 12
-      when "K"
-        @total += 13
-      when "A"
-        @total += 14
-      end
+      @total += card_value[card[0]]
     end
     @total
   end
