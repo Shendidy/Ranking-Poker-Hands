@@ -14,10 +14,30 @@ class PokerHand
     # Read hand string
   def self.hand(hand)
     @cards1 = hand.split(" ") # contains each card as a seperate element
+    return @cards1
+    @cards1 = sort_hand(@cards1)
     @cards2 = @cards1.map{ |a| a.chr } # ignores the suit of each card
     @cards3 = @cards1.map{ |a| a[-1]} # gets only the suit of each card
 
     return @cards1
+  end
+
+  # a method to sort a hand in descending order
+  def self.sort_hand(cards = @cards1)
+    i = 0
+    while i < cards.length
+      j = i + 1
+      while j < cards.length
+        if @card_value[cards[i].chr] < @card_value[cards[j].chr]
+          temp = cards[j]
+          cards[j] = cards[i]
+          cards[i] = temp
+        end
+        j += 1
+      end
+      i += 1
+    end
+    return cards
   end
 
   # Calculate hand total points before adding value of best hand combination
