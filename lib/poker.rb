@@ -5,7 +5,7 @@ class PokerHand
   # 4. compare both hands and return result ("Win", "Tie", "Loss")
 
   @total = 0
-  @rf = @sf = @fk = @fh = @f = @s = @thk = @tp = @p = false
+  @rf = @sf = @fk = @fh = @f = @s = @tk = @tp = @p = false
   @card_value = {"2" => 2, "3" => 3, "4" => 4, "5" => 5, "6" => 6, "7" => 7, "8" => 8, "9" => 9, "T" => 10, "J" => 11, "Q" => 12, "K" => 13, "A" => 14}
 
 
@@ -13,9 +13,7 @@ class PokerHand
   # 1.
     # Read hand string
   def self.hand(hand)
-    @cards1 = hand.split(" ") # contains each card as a seperate element
-    return @cards1
-    @cards1 = sort_hand(@cards1)
+    @cards1 = sort_hand(hand.split(" ")) # contains each card as a seperate element
     @cards2 = @cards1.map{ |a| a.chr } # ignores the suit of each card
     @cards3 = @cards1.map{ |a| a[-1]} # gets only the suit of each card
 
@@ -42,7 +40,6 @@ class PokerHand
 
   # Calculate hand total points before adding value of best hand combination
   def self.total (cards = @cards2)
-
     cards.each do |card|
       @total += @card_value[card]
     end
@@ -58,22 +55,27 @@ class PokerHand
     # Flush
     # Straight
     # 3 of a kind (+ kicker)
-    # 2 pairs (+ kicker)
-    # Pair (+ kicker)
-    check_pair(hand)
+    # 1 or 2 pairs (+ kicker)
+    check_pairs(hand)
     # High card
   end
 
-  def self.check_pair(cards = @cards2) # receives the hand array without suits
+  def self.check_pairs(cards = @cards2) # receives the hand array without suits
     # ["K", "2", "5", "2", "T"]
     # returns true if at least 1 pair exists, plus an array of remaining cards sorted high to Low
-    pair = cards.detect{|card| cards.count(card) > 1}
+    # pair = cards.detect{|card| cards.count(card) > 1}
+    @p = @tp = false
+    pair = cards.group_by{ |e| e }.select { |k, v| v.size > 1 }.map(&:first)
 
     # if no duplicates
-    answer = [false, cards] if pair == nil
-    return answer if pair == nil
+    answer = [false, cards] if pair == []
+    return answer if pair == []
 
-    return "Have pair"
+    # if found a pair
+    pair.each {|a| cards.delete(a)}
+    @p = true if pair.count == 1 && !@tp && !@tk && !@fh
+    @tp = true if pair.count == 2 && !@p && !@th && !@fh
+    return [pair, cards]
 
   end
 
