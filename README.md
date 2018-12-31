@@ -48,3 +48,52 @@ If you finished this kata, you might want to continue with Sortable Poker Hands
 - in Hand created the following methods
   - hand: To split the string of cards to an array of cards
   - total: To calculate the total points of hand, before adding the numbers in the above note.
+
+
+- check a hand
+  - create 9 boolean variables for each combination and initialise all to false.
+        - @rf  = Royal Flush
+        - @sf  = Straigh Flush
+        - @fk  = Four of a Kind
+        - @fh  = Full House
+        - @f   = Flush
+        - @s   = Straight
+        - @thk = THree of a Kind
+        - @tp  = Two Pairs
+        - @p   = Pair
+  - check initial total
+  - check any combination and their kicker card value
+    - for pair: make a method to check if any 2 cards have the same number
+    - for 2 pairs: make a method to check if there are 2 of pair matches (use the same method for pair but see if you have 2 different pairs)
+    - for three of a kind: make a method to check if any 3 cards have the same number
+    - for straight: make a method to check if the 5 numbers are consecutive and the suits are not all the same.
+    -
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+x
