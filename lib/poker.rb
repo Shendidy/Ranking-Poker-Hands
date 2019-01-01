@@ -51,6 +51,7 @@ class PokerHand
     # check Straight Flush
     # check 4 of a kind
     # check Full house
+    check_full_house(hand)
     # check Flush
     check_flush(hand)
     # check Straight
@@ -64,6 +65,13 @@ class PokerHand
     # High card (refer to @cards2)
   end
 
+  def self.check_full_house(hand)
+    @winner.each{|k, v| @winner[k] = false}
+    three = check_three_of_a_kind(hand)
+    return false if !three || three[1][0] != three[1][1]
+    return [three[0], three[1][0]] if three[1][0] == three[1][1]
+  end
+
   def self.check_flush(suits = @cards3, cards = @cards2)
     @winner.each{|k, v| @winner[k] = false}
     flush = false
@@ -75,8 +83,8 @@ class PokerHand
         flush = true
       end
     end
-    answer = [flush, cards[0]]
-    return answer
+    return flush if !flush
+    return answer = [flush, cards[0]]
   end
 
   def self.check_straight(cards = @cards2)
@@ -90,8 +98,8 @@ class PokerHand
         straight = true
       end
     end
-    answer = [straight, cards[0]]
-    return answer
+    return straight if !straight
+    return answer = [straight, cards[0]]
   end
 
   def self.check_three_of_a_kind(cards = @cards2)
@@ -99,13 +107,12 @@ class PokerHand
     three_cards = cards.group_by{|e| e}.select{|k, v| v.size > 2}.map(&:first)
 
     # if no 3 of a Kind
-    answer = [false, cards] if three_cards.count != 1
-    return answer if three_cards.count != 1
+    return false if three_cards.count != 1
 
     # if three of a Kind
     three_cards.each {|a| cards.delete(a)}
     @winner[:tk] = true if three_cards.count == 1
-    return [three_cards, cards]
+    return [three_cards.join, cards]
   end
 
   def self.check_2pairs(cards = @cards2)
@@ -113,8 +120,7 @@ class PokerHand
     pairs = cards.group_by{|e| e}.select{|k, v| v.size > 1}.map(&:first)
 
     # if no duplicates
-    answer = [false, cards] if pairs.count != 2
-    return answer if pairs.count != 2
+    return false if pairs.count != 2
 
     # if found 2 pairs
     pairs.each {|a| cards.delete(a)}
@@ -127,13 +133,12 @@ class PokerHand
     pair = cards.group_by{|e| e}.select{|k, v| v.size > 1}.map(&:first)
 
     # if no duplicates
-    answer = [false, cards] if pair.count != 1
-    return answer if pair.count != 1
+    return false if pair.count != 1
 
     # if found a pair
     pair.each {|a| cards.delete(a)}
     @winner[:p] = true if pair.count == 1
-    return [pair, cards]
+    return [pair.join, cards]
 
   end
 
