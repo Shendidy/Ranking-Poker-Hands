@@ -5,7 +5,7 @@ class PokerHand
   # 4. compare both hands and return result ("Win", "Tie", "Loss")
 
   @total = 0
-  @rf = @sf = @fk = @fh = @f = @s = @tk = @tp = @p = false
+  @winner = {rf: false, sf: false, fk: false, fh: false, f: false, s: false, tk: false, tp: false, p: false}
   @card_value = {"2" => 2, "3" => 3, "4" => 4, "5" => 5, "6" => 6, "7" => 7, "8" => 8, "9" => 9, "T" => 10, "J" => 11, "Q" => 12, "K" => 13, "A" => 14}
 
 
@@ -48,33 +48,60 @@ class PokerHand
 
   # Method to check what hand combination is achieved
   def self.best_hand
-    # Royal Flush
-    # Straight Flush
-    # 4 of a kind
-    # Full house
-    # Flush
-    # Straight
-    # 3 of a kind (+ kicker)
-    # 1 or 2 pairs (+ kicker)
-    check_pairs(hand)
+    # check Royal Flush
+    # check Straight Flush
+    # check 4 of a kind
+    # check Full house
+    # check Flush
+    # check Straight
+    # check 3 of a kind (+ kicker)
+    check_three_of_a_kind(hand)
+    # check 2 pairs (+ kicker)
+    check_2pairs(hand)
+    # check a pair (+ kicker)
+    check_pair(hand)
     # High card
   end
 
-  def self.check_pairs(cards = @cards2) # receives the hand array without suits
-    # ["K", "2", "5", "2", "T"]
-    # returns true if at least 1 pair exists, plus an array of remaining cards sorted high to Low
-    # pair = cards.detect{|card| cards.count(card) > 1}
-    @p = @tp = false
-    pair = cards.group_by{ |e| e }.select { |k, v| v.size > 1 }.map(&:first)
+  def self.check_three_of_a_kind(cards = @cards2)
+    @winner.each{|k, v| @winner[k] = false}
+    three_cards = cards.group_by{|e| e}.select{|k, v| v.size > 2}.map(&:first)
+
+    # if no 3 of a Kind
+    answer = [false, cards] if three_cards.count != 1
+    return answer if three_cards.count != 1
+
+    # if three of a Kind
+    three_cards.each {|a| cards.delete(a)}
+    @winner[:tk] = true if three_cards.count == 1
+    return [three_cards, cards]
+  end
+
+  def self.check_2pairs(cards = @cards2)
+    @winner.each{|k, v| @winner[k] = false}
+    pairs = cards.group_by{|e| e}.select{|k, v| v.size > 1}.map(&:first)
 
     # if no duplicates
-    answer = [false, cards] if pair == []
-    return answer if pair == []
+    answer = [false, cards] if pairs.count != 2
+    return answer if pairs.count != 2
+
+    # if found 2 pairs
+    pairs.each {|a| cards.delete(a)}
+    @winner[:tp] = true if pairs.count == 2
+    return [pairs, cards]
+  end
+
+  def self.check_pair(cards = @cards2) # receives the hand array without suits
+    @winner.each{|k, v| @winner[k] = false}
+    pair = cards.group_by{|e| e}.select{|k, v| v.size > 1}.map(&:first)
+
+    # if no duplicates
+    answer = [false, cards] if pair.count != 1
+    return answer if pair.count != 1
 
     # if found a pair
     pair.each {|a| cards.delete(a)}
-    @p = true if pair.count == 1 && !@tp && !@tk && !@fh
-    @tp = true if pair.count == 2 && !@p && !@th && !@fh
+    @winner[:p] = true if pair.count == 1
     return [pair, cards]
 
   end
