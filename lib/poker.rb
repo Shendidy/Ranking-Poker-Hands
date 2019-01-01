@@ -10,8 +10,7 @@ class PokerHand
 
 
 
-  # 1.
-    # Read hand string
+  # Read hand string
   def self.hand(hand)
     @cards1 = sort_hand(hand.split(" ")) # contains each card as a seperate element
     @cards2 = @cards1.map{ |a| a.chr } # ignores the suit of each card
@@ -54,13 +53,37 @@ class PokerHand
     # check Full house
     # check Flush
     # check Straight
+    check_straight(hand)
     # check 3 of a kind (+ kicker)
     check_three_of_a_kind(hand)
     # check 2 pairs (+ kicker)
     check_2pairs(hand)
     # check a pair (+ kicker)
     check_pair(hand)
-    # High card
+    # High card (refer to @cards2)
+  end
+
+  def self.check_straight(cards = @cards2)
+    @winner.each{|k, v| @winner[k] = false}
+    straight = false
+    (1..4).each do |a|
+      if @card_value[cards[a - 1]] - @card_value[cards[a]] != 1
+        straight = false
+        break
+      else
+        straight = true
+      end
+    end
+
+    answer = [straight, cards[0]]
+    return answer
+
+    # if no straight
+    #annswer
+    #return answer if
+
+    # if straight
+
   end
 
   def self.check_three_of_a_kind(cards = @cards2)

@@ -40,6 +40,15 @@ describe 'Poker' do
   it '13. checking if three_of_a_kind method works for Full House case' do
     expect(PokerHand.check_three_of_a_kind(["K", "K", "J", "K", "J"])).to eq ([["K"],["J", "J"]])
   end
+  it '14. checking if straight method works' do
+    expect(PokerHand.check_straight(["J", "T", "9", "8", "7"])).to eq([true, "J"])
+  end
+  it '15. checking if straight method works' do
+    expect(PokerHand.check_straight(["A", "T", "9", "8", "7"])).to eq([false, "A"])
+  end
+  it '16. checking if straight method works' do
+    expect(PokerHand.check_straight(["J", "T", "9", "8", "6"])).to eq([false, "J"])
+  end
 end
 
 
