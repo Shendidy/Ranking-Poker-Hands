@@ -73,6 +73,15 @@ describe 'Poker' do
   it '24. checking if full house method works' do
     expect(PokerHand.check_full_house(["A", "A", "K", "K", "Q"])).to eq(false)
   end
+  it '25. checking if four_of_a_kind method works for false (should return false)' do
+    expect(PokerHand.check_four_of_a_kind(["K", "K", "K", "2", "2"])).to eq (false)
+  end
+  it '26. checking if four_of_a_kind method works for false (should return false)' do
+    expect(PokerHand.check_four_of_a_kind(["K", "2", "2", "2", "2"])).to eq (["2", "K"])
+  end
+  it '27. checking if four_of_a_kind method works for false (should return false)' do
+    expect(PokerHand.check_four_of_a_kind(["K", "K", "K", "K", "2"])).to eq (["K", "2"])
+  end
 end
 
 

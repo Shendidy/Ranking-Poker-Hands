@@ -50,6 +50,7 @@ class PokerHand
     # check Royal Flush
     # check Straight Flush
     # check 4 of a kind
+    check_four_of_a_kind(hand)
     # check Full house
     check_full_house(hand)
     # check Flush
@@ -65,11 +66,28 @@ class PokerHand
     # High card (refer to @cards2)
   end
 
+  def self.check_four_of_a_kind(cards = @cards2)
+    @winner.each{|k, v| @winner[k] = false}
+    four_cards = cards.group_by{|e| e}.select{|k, v| v.size > 3}.map(&:first)
+
+    # if no 4 of a Kind
+    return false if four_cards.count != 1
+
+    # if four of a Kind
+    four_cards.each {|a| cards.delete(a)}
+    @winner[:fk] = true if four_cards.count == 1
+    return [four_cards.join, cards.join]
+
+  end
+
   def self.check_full_house(hand)
     @winner.each{|k, v| @winner[k] = false}
     three = check_three_of_a_kind(hand)
     return false if !three || three[1][0] != three[1][1]
-    return [three[0], three[1][0]] if three[1][0] == three[1][1]
+    if three[1][0] == three[1][1]
+      @winner[:fh] = true
+      return [three[0], three[1][0]]
+    end
   end
 
   def self.check_flush(suits = @cards3, cards = @cards2)
