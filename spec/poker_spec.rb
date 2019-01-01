@@ -49,6 +49,18 @@ describe 'Poker' do
   it '16. checking if straight method works' do
     expect(PokerHand.check_straight(["J", "T", "9", "8", "6"])).to eq([false, "J"])
   end
+  it '17. checking if flush method works' do
+    expect(PokerHand.check_flush(["H", "H", "H", "H", "H"],["J", "T", "9", "8", "6"])).to eq([true, "J"])
+  end
+  it '18. checking if flush method works' do
+    expect(PokerHand.check_flush(["H", "H", "H", "D", "H"],["J", "T", "9", "8", "6"])).to eq([false, "J"])
+  end
+  it '19. checking if flush method works' do
+    expect(PokerHand.check_flush(["D", "H", "H", "H", "H"],["J", "T", "9", "8", "6"])).to eq([false, "J"])
+  end
+  it '20. checking if flush method works' do
+    expect(PokerHand.check_flush(["H", "H", "H", "H", "D"],["J", "T", "9", "8", "6"])).to eq([false, "J"])
+  end
 end
 
 

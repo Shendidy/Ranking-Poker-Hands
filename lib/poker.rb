@@ -52,6 +52,7 @@ class PokerHand
     # check 4 of a kind
     # check Full house
     # check Flush
+    check_flush(hand)
     # check Straight
     check_straight(hand)
     # check 3 of a kind (+ kicker)
@@ -61,6 +62,21 @@ class PokerHand
     # check a pair (+ kicker)
     check_pair(hand)
     # High card (refer to @cards2)
+  end
+
+  def self.check_flush(suits = @cards3, cards = @cards2)
+    @winner.each{|k, v| @winner[k] = false}
+    flush = false
+    (1..4).each do |a|
+      if suits[a - 1] != suits[a]
+        flush = false
+        break
+      else
+        flush = true
+      end
+    end
+    answer = [flush, cards[0]]
+    return answer
   end
 
   def self.check_straight(cards = @cards2)
@@ -74,16 +90,8 @@ class PokerHand
         straight = true
       end
     end
-
     answer = [straight, cards[0]]
     return answer
-
-    # if no straight
-    #annswer
-    #return answer if
-
-    # if straight
-
   end
 
   def self.check_three_of_a_kind(cards = @cards2)
