@@ -48,7 +48,9 @@ class PokerHand
   # Method to check what hand combination is achieved
   def self.best_hand
     # check Royal Flush
+    check_royal_flush(hand)
     # check Straight Flush
+    check_straight_flush(hand)
     # check 4 of a kind
     check_four_of_a_kind(hand)
     # check Full house
@@ -64,6 +66,21 @@ class PokerHand
     # check a pair (+ kicker)
     check_pair(hand)
     # High card (refer to @cards2)
+  end
+
+  def self.check_royal_flush(suits = @cards3, cards = @cards2)
+    @winner.each{|k, v| @winner[k] = false}
+    return check_straight_flush(suits, cards) if !check_straight_flush(suits, cards)
+    return false if cards[0] != "A"
+    return true
+  end
+
+  def self.check_straight_flush(suits = @cards3, cards = @cards2)
+    @winner.each{|k, v| @winner[k] = false}
+    return check_straight(cards) if !check_straight(cards)
+    return check_flush(suits, cards) if !check_flush(suits, cards)
+    @winner[:sf] = true
+    return [true, cards[0]]
   end
 
   def self.check_four_of_a_kind(cards = @cards2)
@@ -102,6 +119,7 @@ class PokerHand
       end
     end
     return flush if !flush
+    @winner[:f] = true
     return answer = [flush, cards[0]]
   end
 
@@ -117,6 +135,7 @@ class PokerHand
       end
     end
     return straight if !straight
+    @winner[:s] = true
     return answer = [straight, cards[0]]
   end
 

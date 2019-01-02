@@ -82,6 +82,24 @@ describe 'Poker' do
   it '27. checking if four_of_a_kind method works for false (should return false)' do
     expect(PokerHand.check_four_of_a_kind(["K", "K", "K", "K", "2"])).to eq (["K", "2"])
   end
+  it '28. checking if straight flush method works' do
+    expect(PokerHand.check_straight_flush(["H", "H", "H", "H", "H"],["J", "T", "9", "8", "6"])).to eq(false)
+  end
+  it '29. checking if straight flush method works' do
+    expect(PokerHand.check_straight_flush(["D", "H", "H", "H", "H"],["J", "T", "9", "8", "7"])).to eq(false)
+  end
+  it '30. checking if straight flush method works' do
+    expect(PokerHand.check_straight_flush(["H", "H", "H", "H", "H"],["J", "T", "9", "8", "7"])).to eq([true, "J"])
+  end
+  it '31. checking if royal flush method works' do
+    expect(PokerHand.check_royal_flush(["H", "H", "H", "H", "H"],["Q", "T", "9", "8", "7"])).to eq(false)
+  end
+  it '32. checking if royal flush method works' do
+    expect(PokerHand.check_royal_flush(["H", "H", "H", "H", "H"],["J", "T", "9", "8", "7"])).to eq(false)
+  end
+  it '33. checking if royal flush method works' do
+    expect(PokerHand.check_royal_flush(["H", "H", "H", "H", "H"],["A", "K", "Q", "J", "T"])).to eq(true)
+  end
 end
 
 
