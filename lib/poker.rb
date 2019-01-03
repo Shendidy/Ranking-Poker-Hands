@@ -7,8 +7,14 @@ class PokerHand
   @total = 0
   @winner = {rf: false, sf: false, fk: false, fh: false, f: false, s: false, tk: false, tp: false, p: false}
   @card_value = {"2" => 2, "3" => 3, "4" => 4, "5" => 5, "6" => 6, "7" => 7, "8" => 8, "9" => 9, "T" => 10, "J" => 11, "Q" => 12, "K" => 13, "A" => 14}
+  @main, @secondary = String.new
+  @remaining = []
 
-
+  def self.reset_variables
+    @winner.each{|k, v| @winner[k] = false}
+    @main = @secondary = ""
+    @remaining = []
+  end
 
   # Read hand string
   def self.hand(hand)
@@ -46,64 +52,85 @@ class PokerHand
   end
 
   # Method to check what hand combination is achieved
-  def self.best_hand
+  def self.best_hand_rank(suits = @cards3, cards = @cards2)
     # check Royal Flush
-    check_royal_flush(hand)
+    if check_royal_flush(suits, cards)
+      return ["Royal Flush"]
     # check Straight Flush
-    check_straight_flush(hand)
+    elsif check_straight_flush(suits, cards)
+      return ["Straight Flush", @secondary]
     # check 4 of a kind
-    check_four_of_a_kind(hand)
+  elsif check_four_of_a_kind(cards)
+      return ["Four of a Kind", @main, @remaining]
     # check Full house
-    check_full_house(hand)
+    elsif check_full_house(cards)
+      return ["Full House", @main, @secondary]
     # check Flush
-    check_flush(hand)
+    elsif check_flush(suits, cards)
+      return ["Flush"]
     # check Straight
-    check_straight(hand)
+    elsif check_straight(cards)
+      return ["Straight"]
     # check 3 of a kind (+ kicker)
-    check_three_of_a_kind(hand)
+  elsif check_three_of_a_kind(cards)
+      return ["Three of a Kind"]
     # check 2 pairs (+ kicker)
-    check_2pairs(hand)
+    elsif check_2pairs(cards)
+      return ["Two Pairs"]
     # check a pair (+ kicker)
-    check_pair(hand)
+    elsif check_pair(cards)
+      return ["Pair"]
     # High card (refer to @cards2)
+    else
+      return ["High Card"]
+    end
   end
 
   def self.check_royal_flush(suits = @cards3, cards = @cards2)
-    @winner.each{|k, v| @winner[k] = false}
+    reset_variables
     return check_straight_flush(suits, cards) if !check_straight_flush(suits, cards)
     return false if cards[0] != "A"
+    @winner[:rf] = true
     return true
   end
 
   def self.check_straight_flush(suits = @cards3, cards = @cards2)
-    @winner.each{|k, v| @winner[k] = false}
+    reset_variables
     return check_straight(cards) if !check_straight(cards)
     return check_flush(suits, cards) if !check_flush(suits, cards)
     @winner[:sf] = true
-    return [true, cards[0]]
+    @secondary = cards[0]
+    return true
   end
 
   def self.check_four_of_a_kind(cards = @cards2)
-    @winner.each{|k, v| @winner[k] = false}
-    four_cards = cards.group_by{|e| e}.select{|k, v| v.size > 3}.map(&:first)
+    reset_variables
+    new_cards = cards
+    four_cards = new_cards.group_by{|e| e}.select{|k, v| v.size > 3}.map(&:first)
 
     # if no 4 of a Kind
     return false if four_cards.count != 1
 
     # if four of a Kind
-    four_cards.each {|a| cards.delete(a)}
+    four_cards.each {|a| new_cards.delete(a)}
     @winner[:fk] = true if four_cards.count == 1
-    return [four_cards.join, cards.join]
+
+    @main = four_cards.join
+    @remaining = new_cards.join
+
+    return true
 
   end
 
-  def self.check_full_house(hand)
-    @winner.each{|k, v| @winner[k] = false}
-    three = check_three_of_a_kind(hand)
+  def self.check_full_house(cards = @cards2)
+    reset_variables
+    three = check_three_of_a_kind(cards)
     return false if !three || three[1][0] != three[1][1]
     if three[1][0] == three[1][1]
       @winner[:fh] = true
-      return [three[0], three[1][0]]
+      @main = three[0]
+      @secondary = three[1][0]
+      return true
     end
   end
 

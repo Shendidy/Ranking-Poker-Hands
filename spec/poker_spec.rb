@@ -62,13 +62,13 @@ describe 'Poker' do
     expect(PokerHand.check_flush(["H", "H", "H", "H", "D"],["J", "T", "9", "8", "6"])).to eq(false)
   end
   it '21. checking if full house method works' do
-    expect(PokerHand.check_full_house(["A", "A", "A", "K", "K"])).to eq(["A", "K"])
+    expect(PokerHand.check_full_house(["A", "A", "A", "K", "K"])).to eq(true)
   end
   it '22. checking if full house method works' do
     expect(PokerHand.check_full_house(["A", "A", "A", "K", "Q"])).to eq(false)
   end
   it '23. checking if full house method works' do
-    expect(PokerHand.check_full_house(["A", "A", "K", "K", "K"])).to eq(["K", "A"])
+    expect(PokerHand.check_full_house(["A", "A", "K", "K", "K"])).to eq(true)
   end
   it '24. checking if full house method works' do
     expect(PokerHand.check_full_house(["A", "A", "K", "K", "Q"])).to eq(false)
@@ -77,10 +77,10 @@ describe 'Poker' do
     expect(PokerHand.check_four_of_a_kind(["K", "K", "K", "2", "2"])).to eq (false)
   end
   it '26. checking if four_of_a_kind method works for false (should return false)' do
-    expect(PokerHand.check_four_of_a_kind(["K", "2", "2", "2", "2"])).to eq (["2", "K"])
+    expect(PokerHand.check_four_of_a_kind(["K", "2", "2", "2", "2"])).to eq (true)
   end
   it '27. checking if four_of_a_kind method works for false (should return false)' do
-    expect(PokerHand.check_four_of_a_kind(["K", "K", "K", "K", "2"])).to eq (["K", "2"])
+    expect(PokerHand.check_four_of_a_kind(["K", "K", "K", "K", "2"])).to eq (true)
   end
   it '28. checking if straight flush method works' do
     expect(PokerHand.check_straight_flush(["H", "H", "H", "H", "H"],["J", "T", "9", "8", "6"])).to eq(false)
@@ -89,7 +89,7 @@ describe 'Poker' do
     expect(PokerHand.check_straight_flush(["D", "H", "H", "H", "H"],["J", "T", "9", "8", "7"])).to eq(false)
   end
   it '30. checking if straight flush method works' do
-    expect(PokerHand.check_straight_flush(["H", "H", "H", "H", "H"],["J", "T", "9", "8", "7"])).to eq([true, "J"])
+    expect(PokerHand.check_straight_flush(["H", "H", "H", "H", "H"],["J", "T", "9", "8", "7"])).to eq(true)
   end
   it '31. checking if royal flush method works' do
     expect(PokerHand.check_royal_flush(["H", "H", "H", "H", "H"],["Q", "T", "9", "8", "7"])).to eq(false)
@@ -99,6 +99,18 @@ describe 'Poker' do
   end
   it '33. checking if royal flush method works' do
     expect(PokerHand.check_royal_flush(["H", "H", "H", "H", "H"],["A", "K", "Q", "J", "T"])).to eq(true)
+  end
+  it '34. checking if best hand rank method works' do
+    expect(PokerHand.best_hand_rank(["H", "H", "H", "H", "H"],["A", "K", "Q", "J", "T"])).to eq(["Royal Flush"])
+  end
+  it '35. checking if best hand rank method works' do
+    expect(PokerHand.best_hand_rank(["H", "H", "H", "H", "H"],["K", "Q", "J", "T", "9"])).to eq(["Straight Flush", "K"])
+  end
+  it '36. checking if best hand rank method works' do
+    expect(PokerHand.best_hand_rank(["H", "S", "C", "D", "S"],["K", "K", "K", "K", "2"])).to eq(["Four of a Kind", "K", "2"])
+  end
+  it '37. checking if best hand rank method works' do
+    expect(PokerHand.best_hand_rank(["H", "S", "C", "D", "S"],["K", "K", "K", "2", "2"])).to eq(["Full House", "K", "2"])
   end
 end
 
