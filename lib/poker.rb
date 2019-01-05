@@ -64,19 +64,19 @@ class PokerHand
       return ["Four of a Kind", @main, @remaining]
     # check Full house
     elsif check_full_house(cards)
-      return ["Full House", @main, @secondary]
+      return ["Full House", @main, @remaining[0]]
     # check Flush
     elsif check_flush(suits, cards)
-      return ["Flush"]
+      return ["Flush", @remaining]
     # check Straight
     elsif check_straight(cards)
-      return ["Straight"]
+      return ["Straight", @main]
     # check 3 of a kind (+ kicker)
-  elsif check_three_of_a_kind(cards)
-      return ["Three of a Kind"]
+    elsif check_three_of_a_kind(cards)
+      return ["Three of a kind", @main, @remaining]
     # check 2 pairs (+ kicker)
     elsif check_2pairs(cards)
-      return ["Two Pairs"]
+      return ["Two pairs", @main, @secondary, @remaining]
     # check a pair (+ kicker)
     elsif check_pair(cards)
       return ["Pair"]
@@ -105,18 +105,17 @@ class PokerHand
 
   def self.check_four_of_a_kind(cards = @cards2)
     reset_variables
-    new_cards = cards
-    four_cards = new_cards.group_by{|e| e}.select{|k, v| v.size > 3}.map(&:first)
+    four_cards = cards.group_by{|e| e}.select{|k, v| v.size > 3}.map(&:first)
 
     # if no 4 of a Kind
     return false if four_cards.count != 1
 
     # if four of a Kind
-    four_cards.each {|a| new_cards.delete(a)}
+    four_cards.each {|a| cards.delete(a)}
     @winner[:fk] = true if four_cards.count == 1
 
     @main = four_cards.join
-    @remaining = new_cards.join
+    @remaining = cards.join
 
     return true
 
@@ -125,17 +124,15 @@ class PokerHand
   def self.check_full_house(cards = @cards2)
     reset_variables
     three = check_three_of_a_kind(cards)
-    return false if !three || three[1][0] != three[1][1]
-    if three[1][0] == three[1][1]
+    return false if !three || @remaining[0] != @remaining[1]
+    if @remaining[0] == @remaining[1]
       @winner[:fh] = true
-      @main = three[0]
-      @secondary = three[1][0]
       return true
     end
   end
 
   def self.check_flush(suits = @cards3, cards = @cards2)
-    @winner.each{|k, v| @winner[k] = false}
+    reset_variables
     flush = false
     (1..4).each do |a|
       if suits[a - 1] != suits[a]
@@ -147,11 +144,12 @@ class PokerHand
     end
     return flush if !flush
     @winner[:f] = true
-    return answer = [flush, cards[0]]
+    @remaining = cards
+    return true
   end
 
   def self.check_straight(cards = @cards2)
-    @winner.each{|k, v| @winner[k] = false}
+    reset_variables
     straight = false
     (1..4).each do |a|
       if @card_value[cards[a - 1]] - @card_value[cards[a]] != 1
@@ -163,33 +161,39 @@ class PokerHand
     end
     return straight if !straight
     @winner[:s] = true
-    return answer = [straight, cards[0]]
+    @main = cards[0]
+    return true
   end
 
   def self.check_three_of_a_kind(cards = @cards2)
-    @winner.each{|k, v| @winner[k] = false}
-    three_cards = cards.group_by{|e| e}.select{|k, v| v.size > 2}.map(&:first)
+    reset_variables
+    three_card = cards.group_by{|e| e}.select{|k, v| v.size > 2}.map(&:first)
 
     # if no 3 of a Kind
-    return false if three_cards.count != 1
+    return false if three_card.count != 1
 
     # if three of a Kind
-    three_cards.each {|a| cards.delete(a)}
-    @winner[:tk] = true if three_cards.count == 1
-    return [three_cards.join, cards]
+    @winner[:tk] = true if three_card.count == 1
+    @remaining = cards - three_card
+    @main = three_card.join
+    return true
   end
 
   def self.check_2pairs(cards = @cards2)
-    @winner.each{|k, v| @winner[k] = false}
+    reset_variables
     pairs = cards.group_by{|e| e}.select{|k, v| v.size > 1}.map(&:first)
 
-    # if no duplicates
+    # if no 2 pairs
     return false if pairs.count != 2
 
     # if found 2 pairs
     pairs.each {|a| cards.delete(a)}
     @winner[:tp] = true if pairs.count == 2
-    return [pairs, cards]
+    @main = pairs[0]
+    @secondary = pairs[1]
+    @remaining = (cards - pairs).join
+    
+    return true
   end
 
   def self.check_pair(cards = @cards2) # receives the hand array without suits
