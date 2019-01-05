@@ -79,10 +79,10 @@ class PokerHand
       return ["Two pairs", @main, @secondary, @remaining]
     # check a pair (+ kicker)
     elsif check_pair(cards)
-      return ["Pair"]
+      return ["Pair", @main, @remaining]
     # High card (refer to @cards2)
     else
-      return ["High Card"]
+      return ["High card", cards]
     end
   end
 
@@ -187,26 +187,26 @@ class PokerHand
     return false if pairs.count != 2
 
     # if found 2 pairs
-    pairs.each {|a| cards.delete(a)}
     @winner[:tp] = true if pairs.count == 2
     @main = pairs[0]
     @secondary = pairs[1]
     @remaining = (cards - pairs).join
-    
+
     return true
   end
 
   def self.check_pair(cards = @cards2) # receives the hand array without suits
-    @winner.each{|k, v| @winner[k] = false}
+    reset_variables
     pair = cards.group_by{|e| e}.select{|k, v| v.size > 1}.map(&:first)
 
     # if no duplicates
     return false if pair.count != 1
 
     # if found a pair
-    pair.each {|a| cards.delete(a)}
     @winner[:p] = true if pair.count == 1
-    return [pair.join, cards]
+    @main = pair[0]
+    @remaining = cards - pair
+    return true
 
   end
 

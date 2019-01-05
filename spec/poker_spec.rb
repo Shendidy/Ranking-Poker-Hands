@@ -17,7 +17,7 @@ describe 'Poker' do
     expect(PokerHand.check_pair(["K", "T", "8", "5", "2"])).to eq (false)
   end
   it '6. checking if pair method works (should return [pair, kickers array])' do
-    expect(PokerHand.check_pair(["K", "T", "5", "2", "2"])).to eq (["2", ["K", "T", "5"]])
+    expect(PokerHand.check_pair(["K", "T", "5", "2", "2"])).to eq (true)
   end
   it '7. checking if pair method works with 2 pairs(should return false' do
     expect(PokerHand.check_pair(["K", "T", "K", "2", "2"])).to eq (false)
@@ -123,6 +123,12 @@ describe 'Poker' do
   end
   it '41. checking if best hand rank method works' do
     expect(PokerHand.best_hand_rank(["H", "C", "H", "D", "S"],["T", "T", "9", "9", "5"])).to eq(["Two pairs", "T", "9", "5"])
+  end
+  it '42. checking if best hand rank method works' do
+    expect(PokerHand.best_hand_rank(["H", "C", "H", "D", "S"],["T", "T", "9", "5", "2"])).to eq(["Pair", "T", ["9", "5", "2"]])
+  end
+  it '43. checking if best hand rank method works' do
+    expect(PokerHand.best_hand_rank(["H", "C", "H", "D", "S"],["K", "T", "9", "5", "2"])).to eq(["High card", ["K", "T", "9", "5", "2"]])
   end
 end
 
